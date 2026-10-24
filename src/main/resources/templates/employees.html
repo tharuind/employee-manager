@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Employee Management System</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<header class="topbar">
+    <h1>Employee Management System</h1>
+    <p>Spring Boot &middot; Thymeleaf &middot; MySQL</p>
+</header>
+<main class="container">
+    <div class="alert success" th:if="${success}" th:text="${success}"></div>
+    <div class="alert danger" th:if="${error}" th:text="${error}"></div>
+
+    <section class="card">
+        <h2>Register an Employee</h2>
+        <form th:action="@{/employees}" th:object="${employee}" method="post" novalidate>
+            <div th:replace="~{fragments :: fields}"></div>
+            <button type="submit" class="btn primary">Save Employee</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <div class="section-heading">
+            <h2>Employees <span class="badge" th:text="${#lists.size(employees)}">0</span></h2>
+            <form class="search-form" th:action="@{/employees}" method="get">
+                <label class="visually-hidden" for="keyword">Search by name</label>
+                <input type="search" id="keyword" name="keyword" th:value="${keyword}" placeholder="Search by name">
+                <button type="submit" class="btn">Search</button>
+                <a class="btn" th:href="@{/employees}">Clear</a>
+            </form>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Department</th>
+                    <th>Salary</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${#lists.isEmpty(employees)}">
+                    <td colspan="7" class="empty">No employees found.</td>
+                </tr>
+                <tr th:each="employeeRow : ${employees}">
+                    <td th:text="${employeeRow.id}"></td>
+                    <td th:text="${employeeRow.fullName}"></td>
+                    <td th:text="${employeeRow.email}"></td>
+                    <td th:text="${employeeRow.phone}"></td>
+                    <td th:text="${employeeRow.department}"></td>
+                    <td th:text="${employeeRow.salary}"></td>
+                    <td class="actions">
+                        <a class="btn small" th:href="@{/employees/{id}/edit(id=${employeeRow.id})}">Edit</a>
+                        <form th:action="@{/employees/{id}/delete(id=${employeeRow.id})}" method="post"
+                              onsubmit="return confirm('Delete this employee?');">
+                            <button type="submit" class="btn small danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
+<footer class="footer">COSC 32133 / BECS 32263 &middot; Lab Sheet 05</footer>
+</body>
+</html>
